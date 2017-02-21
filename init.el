@@ -64,7 +64,6 @@ values."
      restclient
      (gtags :disabled-for clojure emacs-lisp javascript latex python shell-scripts)
      (shell :variables shell-default-shell 'eshell)
-     windows-scripts
      docker
      latex
      pdf-tools
@@ -84,8 +83,8 @@ values."
      java
      javascript
      (typescript :variables
-                typescript-fmt-on-save nil
-                typescript-fmt-tool 'typescript-formatter)
+                 typescript-fmt-on-save nil
+                 typescript-fmt-tool 'typescript-formatter)
      emacs-lisp
      (clojure :variables clojure-enable-fancify-symbols t)
      racket
@@ -448,14 +447,50 @@ values."
                             (setq default-directory old-default-directory))))))
 
 
-  ;;w3m配置项（用于上网）
-  (add-to-list 'load-path "C:/Users/yangf/.emacs.d/w3m-lisp") ;;w3m所需要的lisp文件，所在路径
-  (add-to-list 'exec-path "C:/Emacs/bin/w3m") ;;指定w3m可执行程序，所在的执行路径
-  (require 'w3m-load)
-  (setq w3m-use-favicon nil)
-  (setq w3m-command-arguments '("-cookie" "-F"))
-  (setq w3m-use-cookies t)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;
+  ;;  设置emacs-w3m浏览器
+  ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (autoload 'w3m "w3m" "interface for w3m on emacs" t)
+
+  ;; 设置w3m主页
   (setq w3m-home-page "http://www.baidu.com")
+
+  ;; 默认显示图片
+  (setq w3m-default-display-inline-images t)
+  (setq w3m-default-toggle-inline-images t)
+
+  ;; 使用cookies
+  (setq w3m-use-cookies t)
+
+  ;;设定w3m运行的参数，分别为使用cookie和使用框架
+  (setq w3m-command-arguments '("-cookie" "-F"))
+
+  ;; 使用w3m作为默认浏览器
+  (setq browse-url-browser-function 'w3m-browse-url)
+  (setq w3m-view-this-url-new-session-in-background t)
+
+
+  ;;显示图标
+  (setq w3m-show-graphic-icons-in-header-line t)
+  (setq w3m-show-graphic-icons-in-mode-line t)
+
+  ;;C-c C-p 打开，这个好用
+  (setq w3m-view-this-url-new-session-in-background t)
+
+
+  (add-hook 'w3m-fontify-after-hook 'remove-w3m-output-garbages)                                    
+  (defun remove-w3m-output-garbages ()
+    "去掉w3m输出的垃圾."
+    (interactive)
+    (let ((buffer-read-only))
+      (setf (point) (point-min))
+      (while (re-search-forward "[\200-\240]" nil t)
+        (replace-match " "))
+      (set-buffer-multibyte t))
+    (set-buffer-modified-p nil))
 
   )
 
@@ -466,18 +501,4 @@ values."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (youdao-dictionary names chinese-word-at-point xterm-color wgrep unfill smex smeargle shell-pop orgit org-projectile org-present org-pomodoro alert log4e gntp org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow ivy-purpose ivy-hydra htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-ivy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl counsel-projectile counsel swiper ivy company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-purpose window-purpose imenu-list helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy popup helm-core))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-)
+  )
